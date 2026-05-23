@@ -40,6 +40,9 @@ func TestExponentialBackoff_WithJitter(t *testing.T) {
 		if d < 0 {
 			t.Errorf("attempt %d: negative jitter delay %v", i, d)
 		}
+		if d > 5*time.Second {
+			t.Errorf("attempt %d: jitter delay %v exceeds max delay", i, d)
+		}
 	}
 }
 
