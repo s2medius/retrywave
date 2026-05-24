@@ -93,3 +93,14 @@ func (b *Breaker) State() State {
 	defer b.mu.Unlock()
 	return b.state
 }
+
+// Reset forcibly closes the circuit breaker and clears all failure counts.
+// This is useful in tests or when an operator wants to manually recover a
+// tripped breaker without waiting for the reset timeout.
+func (b *Breaker) Reset() {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	b.failures = 0
+	b.state = StateClosed
+	b.openedAt = time.Time{}
+}
