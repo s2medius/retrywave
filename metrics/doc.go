@@ -1,25 +1,17 @@
-// Package metrics provides lightweight, thread-safe counters for observing
-// retry behaviour within retrywave middleware pipelines.
-//
-// # Overview
-//
-// A Counter accumulates four independent totals:
-//
-//   - Attempts  – every call made (initial + retries)
-//   - Successes – calls that returned a non-error, non-5xx response
-//   - Failures  – calls that returned an error or a 5xx response
-//   - Retries   – attempts beyond the first
+// Package metrics provides a thread-safe Recorder for tracking HTTP retry
+// statistics including attempt counts, success and failure outcomes, retry
+// counts, and cumulative latency.
 //
 // # Usage
 //
-//	c := metrics.New()
+// Create a Recorder with New and pass it to middleware or call its methods
+// directly from retry hooks:
 //
-//	c.RecordAttempt()
-//	c.RecordRetry()
-//	c.RecordSuccess()
+//	rec := metrics.New()
+//	// ... wire into transport or hooks ...
+//	snap := rec.Snapshot()
+//	fmt.Println(snap.Attempts, snap.Successes, snap.Failures)
 //
-//	snap := c.Snapshot()
-//	fmt.Println(snap.Attempts, snap.Retries, snap.Successes)
-//
-// All methods are safe for concurrent use.
+// Snapshot returns a point-in-time copy of all counters so callers can read
+// values without holding a lock across their own logic.
 package metrics
